@@ -148,8 +148,8 @@
         <img class="logo" id="logo" src="" alt="logo" /> MemoryRoom 🎴 – Player
       </h1>
       <p class="sub">
-        Trang dành cho người chơi. Nhập mã phòng & tên → lật thẻ theo thời gian
-        thực.
+        Một đồng hồ tổng cho nhiều ván: hoàn thành sớm sẽ tự chuyển ván tiếp
+        theo cho tới khi hết thời gian hoặc đạt số ván tối đa.
       </p>
 
       <div class="card">
@@ -164,8 +164,12 @@
             <span class="pill">Phòng: <span id="roomBadge">-</span></span>
             <span class="pill">Bạn: <span id="me">-</span></span>
             <span class="pill">Còn cặp: <span id="memLeft">--</span></span>
-            <span class="pill">Ván: <span id="roundPlayer">-</span></span>
-            <span class="pill">⏱ <span id="elapsedPlayer">00:00</span></span>
+            <span class="pill"
+              >Ván: <span id="roundPlayer">-</span>/<span id="roundMax"
+                >-</span
+              ></span
+            >
+            <span class="pill">⏱ Còn: <span id="timeRemain">--:--</span></span>
           </div>
           <div class="hr"></div>
           <div id="board" style="display: grid; gap: 12px"></div>
@@ -196,7 +200,6 @@
         appId: "1:763894782961:web:84465068beb77de8024250",
         measurementId: "G-E10MQ37X5Y",
       };
-
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
 
@@ -210,7 +213,7 @@
 
       let joinedRoomId = null,
         myId = null,
-        metaTimerPlayer = null;
+        sessionTimer = null;
 
       $("joinBtn").onclick = async () => {
         const room = $("joinRoom").value.trim().toUpperCase();
@@ -238,21 +241,22 @@
         onValue(ref(db, `rooms/${joinedRoomId}/memory/meta`), (snap) => {
           const meta = snap.val() || {};
           $("roundPlayer").textContent = meta.round || "-";
-          if (metaTimerPlayer) clearInterval(metaTimerPlayer);
-          metaTimerPlayer = setInterval(() => {
-            const start = meta.startAt,
-              endAt = meta.endAt;
-            if (!start || !endAt) {
-              $("elapsedPlayer").textContent = "00:00";
+          $("roundMax").textContent = meta.session?.roundsMax || "-";
+          if (sessionTimer) clearInterval(sessionTimer);
+          sessionTimer = setInterval(() => {
+            const s = meta.session;
+            if (!s) {
+              $("timeRemain").textContent = "--:--";
               return;
             }
-            let remain = Math.max(0, endAt - Date.now());
+            const now = Date.now();
+            const remain = Math.max(0, (s.endAt || 0) - now);
             const m = Math.floor(remain / 60000),
-              s = Math.floor((remain % 60000) / 1000);
-            $("elapsedPlayer").textContent = `${String(m).padStart(
+              ss = Math.floor((remain % 60000) / 1000);
+            $("timeRemain").textContent = `${String(m).padStart(
               2,
               "0"
-            )}:${String(s).padStart(2, "0")}`;
+            )}:${String(ss).padStart(2, "0")}`;
           }, 500);
         });
       }
@@ -262,7 +266,8 @@
           const st = snap.val();
           const board = $("board");
           if (!st) {
-            board.innerHTML = '<div class="muted">Chờ host bắt đầu ván…</div>';
+            board.innerHTML =
+              '<div class="muted">Chờ host bắt đầu phiên…</div>';
             return;
           }
           const meta = (
@@ -270,7 +275,6 @@
           ).val() || { left: "--" };
           $("memLeft").textContent = meta.left;
           const ended = !!meta.ended;
-
           board.style.gridTemplateColumns = `repeat(${
             st.cols || 4
           }, minmax(0,1fr))`;
@@ -287,15 +291,11 @@
             btn.onclick = () => flipCard(card.id);
             board.appendChild(btn);
           });
-
-          if (ended) {
-            $("hint").textContent =
-              "Hết giờ hoặc đã hoàn thành. Chờ host tạo ván mới.";
-          } else {
-            $("hint").textContent = st.lock
-              ? "Đang kiểm tra cặp…"
-              : "Chọn 2 thẻ để lật";
-          }
+          $("hint").textContent = ended
+            ? "Hết thời gian hoặc kết thúc phiên. Chờ host."
+            : st.lock
+            ? "Đang kiểm tra cặp…"
+            : "Chọn 2 thẻ để lật";
         });
       }
 
@@ -305,8 +305,7 @@
         if (!st || st.lock) return;
         const metaRef = ref(db, `rooms/${joinedRoomId}/memory/meta`);
         const meta = (await get(metaRef)).val() || {};
-        if (meta.ended) return; // hết giờ/đã kết thúc
-
+        if (meta.ended) return;
         const card = st.deck.find((c) => c.id === cardId);
         if (!card || card.removed) return;
         if ((st.flipped || []).includes(cardId)) return;
@@ -325,20 +324,7 @@
             await update(base, { deck: st.deck, flipped: [], lock: false });
             const m = (await get(metaRef)).val() || { left: 0 };
             const newLeft = Math.max(0, (m.left || 0) - 1);
-            await update(metaRef, {
-              left: newLeft,
-              ...(newLeft === 0 ? { ended: true, endAt: Date.now() } : {}),
-            });
-            const sRef = ref(db, `rooms/${joinedRoomId}/scores/${myId}`);
-            const p = (await get(sRef)).val() || { name: "", score: 0 };
-            const pts = st.pts || 5;
-            await update(sRef, {
-              name: p.name || $("me").textContent,
-              score: (p.score || 0) + pts,
-            });
-            await update(ref(db, `rooms/${joinedRoomId}/players/${myId}`), {
-              score: (p.score || 0) + pts,
-            });
+            await update(metaRef, { left: newLeft });
           } else {
             setTimeout(async () => {
               await update(base, { flipped: [], lock: false });
