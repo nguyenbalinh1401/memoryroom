@@ -1,461 +1,237 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MemoryRoom – Host</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg: #0b1020;
-        --muted: #98a7ff99;
-        --accent: #7aa2ff;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-        background: radial-gradient(
-          900px 600px at 10% 10%,
-          #18214d 0%,
-          #0b1020 60%
-        );
-        color: #fff;
-      }
-      .wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 28px;
-      }
-      h1 {
-        font-size: 28px;
-        margin: 0 0 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .logo {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        object-fit: cover;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-      }
-      .sub {
-        color: var(--muted);
-        margin: 0 0 24px;
-      }
-      .card {
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.04),
-          rgba(255, 255, 255, 0.02)
-        );
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        padding: 18px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      }
-      .row {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      input,
-      select {
-        width: 100%;
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        background: #0f1530;
-        color: #fff;
-      }
-      input[type="number"],
-      input[type="color"] {
-        max-width: 120px;
-      }
-      button {
-        cursor: pointer;
-        border: 0;
-        background: var(--accent);
-        color: #081126;
-        padding: 12px 16px;
-        border-radius: 12px;
-        font-weight: 700;
-      }
-      button.ghost {
-        background: transparent;
-        color: #cfe0ff;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-      }
-      .muted {
-        color: var(--muted);
-      }
-      .pill {
-        background: #0e1533;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        padding: 6px 10px;
-        border-radius: 999px;
-        color: #cfe0ff;
-        font-weight: 600;
-        display: inline-flex;
-        gap: 8px;
-        align-items: center;
-      }
-      .players {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 6px;
-      }
-      .player {
-        background: #0e1737;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 8px 10px;
-        border-radius: 999px;
-      }
-      .hr {
-        height: 1px;
-        background: rgba(255, 255, 255, 0.08);
-        margin: 14px 0;
-      }
-      .list {
-        display: grid;
-        gap: 10px;
-      }
-      .q {
-        background: #0f1738;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        padding: 12px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <h1>
-        <img class="logo" id="logo" src="" alt="logo" /> MemoryRoom 🎴 – Host
-      </h1>
-      <p class="sub">
-        Trang dành cho giáo viên/host: tạo phòng, nạp cặp Q/A, bắt đầu ván, theo
-        dõi người chơi & bảng điểm.
-      </p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MemoryRoom – Host</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0b1020;--muted:#98a7ff99;--accent:#7aa2ff}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(900px 600px at 10% 10%,#18214d 0%,#0b1020 60%);color:#fff}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px}
+    h1{font-size:28px;margin:0 0 8px;display:flex;align-items:center;gap:10px}
+    .logo{width:36px;height:36px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,.25)}
+    .sub{color:var(--muted);margin:0 0 24px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:#0f1530;color:#fff}
+    input[type="number"],input[type="color"]{max-width:140px}
+    button{cursor:pointer;border:0;background:var(--accent);color:#081126;padding:12px 16px;border-radius:12px;font-weight:700}
+    button.ghost{background:transparent;color:#cfe0ff;border:1px solid rgba(255,255,255,.18)}
+    .muted{color:var(--muted)}
+    .pill{background:#0e1533;border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:999px;color:#cfe0ff;font-weight:600;display:inline-flex;gap:8px;align-items:center}
+    .players{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+    .player{background:#0e1737;border:1px solid rgba(255,255,255,.1);padding:8px 10px;border-radius:999px}
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:14px 0}
+    .list{display:grid;gap:10px}
+    .q{background:#0f1738;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1><img class="logo" id="logo" src="" alt="logo"/> MemoryRoom 🎴 – Host</h1>
+    <p class="sub">Phiên chơi với một <strong>đồng hồ tổng</strong>. Câu hỏi từ <strong>một CSV duy nhất</strong> sẽ được tự động chia thành các vòng 6–7 câu; khi lật hết và còn thời gian, trò chơi tự chuyển vòng.</p>
 
-      <div class="card">
-        <div class="row" style="justify-content: space-between">
-          <strong>Bảng điều khiển</strong>
-          <span class="pill"
-            >Trạng thái: <span id="status">Chưa vào phòng</span></span
-          >
-        </div>
-        <div class="row" style="gap: 8px; margin-top: 8px">
-          <span class="pill">Ván: <span id="roundBadge">-</span></span>
-          <span class="pill">⏱ <span id="elapsedHost">00:00</span></span>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="row">
-          <input id="roomId" placeholder="Mã phòng (ví dụ: ECO101)" />
-          <button id="enterRoom">Vào phòng</button>
-          <button class="ghost" id="copyLink">
-            Copy link dành cho người chơi
-          </button>
-        </div>
-        <div class="row">
-          <input id="logoInput" placeholder="Dán URL logo lớp (PNG/JPG)" />
-          <label class="muted">Màu chủ đạo:</label>
-          <input id="colorInput" type="color" value="#7aa2ff" />
-          <button class="ghost" id="applyBrand">Áp dụng</button>
-        </div>
-
-        <div class="hr"></div>
-        <div class="row">
-          <input type="file" id="fileInput" accept=".csv,.json" />
-          <button id="loadPairs" class="ghost">Tải cặp Q/A</button>
-          <label>Điểm mỗi cặp:</label
-          ><input id="memPts" type="number" value="5" /> <label>Cột:</label
-          ><input id="memCols" type="number" value="4" min="2" max="8" />
-          <label>Thời lượng (giây):</label
-          ><input id="limitSec" type="number" value="120" min="10" step="5" />
-          <button id="startRound">Bắt đầu ván</button>
-          <button class="ghost" id="nextRound">Ván mới (giữ điểm)</button>
-          <button class="ghost" id="resetRound">Xoá bàn / tạo lại</button>
-        </div>
-
-        <div id="queue" class="list"></div>
-
-        <div class="hr"></div>
-        <div>
-          <div class="row">
-            <strong>Người chơi</strong>
-            <span class="pill" id="playerCount">0</span>
-            <button class="ghost" id="exportCsv">Xuất điểm CSV</button>
-          </div>
-          <div class="players" id="players"></div>
-        </div>
-
-        <div class="hr"></div>
-        <div>
-          <div class="row"><strong>Bảng điểm</strong></div>
-          <div id="scoreboard" class="list"></div>
-        </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><strong>Bảng điều khiển</strong>
+        <span class="pill">Trạng thái: <span id="status">Chưa vào phòng</span></span>
+      </div>
+      <div class="row" style="gap:8px;margin-top:8px">
+        <span class="pill">Vòng: <span id="roundBadge">-</span>/<span id="roundMax">-</span></span>
+        <span class="pill">⏱ Còn: <span id="countdown">--:--</span></span>
       </div>
 
-      <p class="muted" style="margin-top: 14px">
-        CSV mẫu: <code>question,answer</code> mỗi dòng là một cặp. JSON:
-        <code>[{q,a},...]</code> hoặc <code>{pairs:[...]}</code>.
-      </p>
+      <div class="hr"></div>
+
+      <div class="row">
+        <input id="roomId" placeholder="Mã phòng (ví dụ: ECO101)"/>
+        <button id="enterRoom">Vào phòng</button>
+        <button class="ghost" id="copyLink">Copy link người chơi</button>
+      </div>
+      <div class="row">
+        <input id="logoInput" placeholder="Dán URL logo lớp (PNG/JPG)"/>
+        <label class="muted">Màu chủ đạo:</label>
+        <input id="colorInput" type="color" value="#7aa2ff"/>
+        <button class="ghost" id="applyBrand">Áp dụng</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <input type="file" id="fileInput" accept=".csv,.json"/>
+        <button id="loadPairs" class="ghost">Tải cặp Q/A</button>
+        <label>Điểm/cặp</label><input id="memPts" type="number" value="5"/>
+        <label>Cột</label><input id="memCols" type="number" value="4" min="2" max="8"/>
+        <label>Tổng thời gian (giây)</label><input id="sessionSec" type="number" value="300" min="30" step="10"/>
+        <button id="startSession">Bắt đầu phiên</button>
+        <button class="ghost" id="resetSession">Kết thúc phiên</button>
+      </div>
+
+      <div id="queue" class="list"></div>
+
+      <div class="hr"></div>
+      <div>
+        <div class="row"><strong>Người chơi</strong><span class="pill" id="playerCount">0</span><button class="ghost" id="exportCsv">Xuất điểm CSV</button></div>
+        <div class="players" id="players"></div>
+      </div>
+
+      <div class="hr"></div>
+      <div>
+        <div class="row"><strong>Bảng điểm</strong></div>
+        <div id="scoreboard" class="list"></div>
+      </div>
     </div>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-      import {
-        getDatabase,
-        ref,
-        set,
-        onValue,
-        update,
-        get,
-        remove,
-      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+    <p class="muted" style="margin-top:14px">CSV mẫu: <code>question,answer</code> mỗi dòng là một cặp. JSON: <code>[{q,a},...]</code> hoặc <code>{pairs:[...]}</code>.</p>
+  </div>
 
-      // === CONFIG FIREBASE ===
-      const firebaseConfig = {
-        apiKey: "AIzaSyDA3fp5A2cGB63kMA8TlEJ2x49rr4DiYbA",
-        authDomain: "game-75e2a.firebaseapp.com",
-        databaseURL:
-          "https://game-75e2a-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "game-75e2a",
-        storageBucket: "game-75e2a.firebasestorage.app",
-        messagingSenderId: "763894782961",
-        appId: "1:763894782961:web:84465068beb77de8024250",
-        measurementId: "G-E10MQ37X5Y",
-      };
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+    import { getDatabase, ref, set, onValue, update, get, remove } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js';
 
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
+    // === FIREBASE CONFIG ===
+    const firebaseConfig = { apiKey:"AIzaSyDA3fp5A2cGB63kMA8TlEJ2x49rr4DiYbA", authDomain:"game-75e2a.firebaseapp.com", databaseURL:"https://game-75e2a-default-rtdb.asia-southeast1.firebasedatabase.app", projectId:"game-75e2a", storageBucket:"game-75e2a.firebasestorage.app", messagingSenderId:"763894782961", appId:"1:763894782961:web:84465068beb77de8024250", measurementId:"G-E10MQ37X5Y" };
+    const app = initializeApp(firebaseConfig); const db = getDatabase(app);
 
-      const $ = (id) => document.getElementById(id);
-      let roomIdGlobal = null,
-        metaTimerHost = null,
-        currentMeta = null,
-        loadedPairs = [];
+    const $ = (id)=>document.getElementById(id);
+    let roomIdGlobal=null, tickTimer=null, autoAdvanceLock=false, loadedPairs=[];
+    const MAX_PER_ROUND = 7; // 6–7 câu/vòng
 
-      // ===== Vào phòng =====
-      $("enterRoom").onclick = async () => {
-        const room = $("roomId").value.trim().toUpperCase();
-        if (!room) return alert("Nhập mã phòng");
-        roomIdGlobal = room;
-        await update(ref(db, `rooms/${room}`), { createdAt: Date.now() });
-        $("status").textContent = `Đã vào phòng ${room}`;
-        bindPlayers(room);
-        bindScores(room);
-        $("copyLink").onclick = async () => {
-          const url = `${location.origin}${location.pathname.replace(
-            "host",
-            "player"
-          )}?room=${room}`;
-          await navigator.clipboard.writeText(url);
-          alert("Đã sao chép link người chơi: " + url);
-        };
-        // hiển thị ván + countdown
-        onValue(ref(db, `rooms/${room}/memory/meta`), (snap) => {
-          currentMeta = snap.val() || {};
-          $("roundBadge").textContent = currentMeta.round || "-";
-          if (metaTimerHost) clearInterval(metaTimerHost);
-          metaTimerHost = setInterval(async () => {
-            const start = currentMeta.startAt,
-              endAt = currentMeta.endAt;
-            if (!start || !endAt) {
-              $("elapsedHost").textContent = "00:00";
-              return;
-            }
-            let remain = Math.max(0, endAt - Date.now());
-            const m = Math.floor(remain / 60000),
-              s = Math.floor((remain % 60000) / 1000);
-            $("elapsedHost").textContent = `${String(m).padStart(
-              2,
-              "0"
-            )}:${String(s).padStart(2, "0")}`;
-            // hết giờ -> tự kết thúc và khóa
-            if (remain <= 0 && !currentMeta.ended) {
-              await update(ref(db, `rooms/${room}/memory/meta`), {
-                ended: true,
-                endAt: endAt,
-              });
-              await update(ref(db, `rooms/${room}/memory/state`), {
-                lock: true,
-              });
-            }
-          }, 500);
+    // ====== Vào phòng ======
+    $("enterRoom").onclick = async ()=>{
+      const room = $("roomId").value.trim().toUpperCase(); if(!room) return alert('Nhập mã phòng');
+      roomIdGlobal = room; await update(ref(db,`rooms/${room}`),{createdAt:Date.now()});
+      $("status").textContent = `Đã vào phòng ${room}`;
+      bindPlayers(room); bindScores(room); bindSession(room);
+      $("copyLink").onclick = async ()=>{ const url = `${location.origin}${location.pathname.replace('host','player')}?room=${room}`; await navigator.clipboard.writeText(url); alert('Đã sao chép link người chơi: '+url); };
+    };
+
+    // ====== Branding ======
+    $("applyBrand").onclick = ()=>{ const url=$("logoInput").value.trim(); if(url) $("logo").src=url; const col=$("colorInput").value; if(col) document.documentElement.style.setProperty('--accent', col); };
+
+    // ====== Players & Scores ======
+    function bindPlayers(room){ onValue(ref(db,`rooms/${room}/players`),(snap)=>{ const players=snap.val()||{}; const ids=Object.keys(players); $("playerCount").textContent=ids.length; $("players").innerHTML=''; ids.forEach(id=>{ const p=players[id]; const chip=document.createElement('div'); chip.className='player'; chip.textContent=`${p.name} • ${p.score||0}`; $("players").appendChild(chip); }); }); }
+    function bindScores(room){ onValue(ref(db,`rooms/${room}/scores`),(snap)=>{ const scores=snap.val()||{}; const arr=Object.values(scores).sort((a,b)=>(b.score||0)-(a.score||0)); $("scoreboard").innerHTML=''; arr.forEach((s,i)=>{ const div=document.createElement('div'); div.className='q'; div.innerHTML=`<div class='row' style='justify-content:space-between'><div><strong>${i+1}. ${s.name}</strong></div><div>${s.score||0} điểm</div></div>`; $("scoreboard").appendChild(div); }); }); }
+
+    // ====== Nạp cặp ======
+    $("loadPairs").onclick = ()=> $("fileInput").click();
+    $("fileInput").onchange = async (e)=>{
+      const f=e.target.files[0]; if(!f) return; const text=await f.text(); loadedPairs=[];
+      if(f.name.endsWith('.json')){ const j=JSON.parse(text); loadedPairs = Array.isArray(j)? j : (j.pairs||[]); }
+      else { const lines=text.split(/\r?\n/).filter(Boolean); const start = lines[0].toLowerCase().includes('question')?1:0; for(let i=start;i<lines.length;i++){ const [q,a] = lines[i].split(','); if(q && a) loadedPairs.push({q,a}); } }
+      $("queue").innerHTML = loadedPairs.length? `<div class='q'>Đã nạp <strong>${loadedPairs.length}</strong> cặp. Bấm "Bắt đầu phiên".</div>` : `<div class='muted'>(Chưa có cặp)</div>`;
+    };
+
+    // ====== Phiên chơi (đồng hồ tổng) ======
+    $("startSession").onclick = async ()=>{
+      try{
+        const room = roomIdGlobal || $("roomId").value.trim().toUpperCase();
+        if(!room) return alert('Nhập mã phòng');
+        if(!loadedPairs.length) return alert('Hãy tải CSV/JSON cặp Q/A');
+        const totalSec = Math.max(30, Number($("sessionSec").value||300));
+
+        // Chia vòng 6–7: tính roundsMax, baseSize(=6) và số vòng đầu có 7 câu (extra)
+        const n=loadedPairs.length; const roundsMax = Math.ceil(n/MAX_PER_ROUND);
+        const baseSize = Math.floor(n/roundsMax); // 6
+        const extra    = n % roundsMax;           // số vòng 7 câu đầu tiên
+
+        // Thứ tự ngẫu nhiên để chia vòng
+        const order=[...Array(n).keys()];
+        for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+
+        const now=Date.now(); const endAt = now + totalSec*1000;
+        await set(ref(db,`rooms/${room}/memory/pairs`), loadedPairs);
+        await set(ref(db,`rooms/${room}/memory/order`), order);
+        await update(ref(db,`rooms/${room}/memory/meta`), {
+          session:{ totalSec: totalSec, startAt: now, endAt: endAt, roundsMax, baseSize, extra },
+          round: 0, left: 0, ended:false, transitioning:false
         });
-      };
+        await createOrAdvanceRound(room, true);
+      }catch(e){ console.error('startSession error', e); alert('Không thể bắt đầu phiên: '+(e?.message||e)); }
+    };
 
-      // ===== Branding =====
-      $("applyBrand").onclick = () => {
-        const url = $("logoInput").value.trim();
-        if (url) $("logo").src = url;
-        const col = $("colorInput").value;
-        if (col) document.documentElement.style.setProperty("--accent", col);
-      };
+    $("resetSession").onclick = async ()=>{
+      const room = roomIdGlobal || $("roomId").value.trim().toUpperCase(); if(!room) return alert('Nhập mã phòng');
+      await update(ref(db,`rooms/${room}/memory/meta`),{ended:true});
+      await update(ref(db,`rooms/${room}/memory/state`),{lock:true});
+      alert('Đã kết thúc phiên.');
+    };
 
-      // ===== Players & Scores realtime =====
-      function bindPlayers(room) {
-        onValue(ref(db, `rooms/${room}/players`), (snap) => {
-          const players = snap.val() || {};
-          const ids = Object.keys(players);
-          $("playerCount").textContent = ids.length;
-          $("players").innerHTML = "";
-          ids.forEach((id) => {
-            const p = players[id];
-            const chip = document.createElement("div");
-            chip.className = "player";
-            chip.textContent = `${p.name} • ${p.score || 0}`;
-            $("players").appendChild(chip);
-          });
-        });
-      }
-      function bindScores(room) {
-        onValue(ref(db, `rooms/${room}/scores`), (snap) => {
-          const scores = snap.val() || {};
-          const arr = Object.values(scores).sort(
-            (a, b) => (b.score || 0) - (a.score || 0)
-          );
-          $("scoreboard").innerHTML = "";
-          arr.forEach((s, i) => {
-            const div = document.createElement("div");
-            div.className = "q";
-            div.innerHTML = `<div class='row' style='justify-content:space-between'><div><strong>${
-              i + 1
-            }. ${s.name}</strong></div><div>${s.score || 0} điểm</div></div>`;
-            $("scoreboard").appendChild(div);
-          });
-        });
-      }
+    function sliceIndicesForRound(meta, roundIndex, orderLen){
+      const base = meta.session?.baseSize || 6; const extra = meta.session?.extra || 0;
+      const prior7 = Math.min(roundIndex-1, extra);
+      const prior6 = Math.max(0, (roundIndex-1)-extra);
+      const start  = prior7*(base+1) + prior6*base;
+      const len    = (roundIndex-1)<extra ? (base+1) : base;
+      const end    = Math.min(start+len, orderLen);
+      return {start,end};
+    }
 
-      // ===== Nạp cặp =====
-      $("loadPairs").onclick = () => $("fileInput").click();
-      $("fileInput").onchange = async (e) => {
-        const f = e.target.files[0];
-        if (!f) return;
-        const text = await f.text();
-        loadedPairs = [];
-        if (f.name.endsWith(".json")) {
-          const j = JSON.parse(text);
-          loadedPairs = Array.isArray(j) ? j : j.pairs || [];
-        } else {
-          const lines = text.split(/\r?\n/).filter(Boolean);
-          const start = lines[0].toLowerCase().includes("question") ? 1 : 0;
-          for (let i = start; i < lines.length; i++) {
-            const [q, a] = lines[i].split(",");
-            if (q && a) loadedPairs.push({ q, a });
+    async function createOrAdvanceRound(room, advance){
+      try{
+        const metaRef=ref(db,`rooms/${room}/memory/meta`);
+        const pairsRef=ref(db,`rooms/${room}/memory/pairs`);
+        const orderRef=ref(db,`rooms/${room}/memory/order`);
+        const meta=(await get(metaRef)).val()||{};
+        const pairs=(await get(pairsRef)).val()||[];
+        const order=(await get(orderRef)).val()||[];
+        if(!pairs.length){ alert('Chưa có bộ cặp để tạo ván'); return; }
+
+        const newRound = advance ? Number(meta.round||0)+1 : (meta.round||1);
+        const remainMs = Math.max(0,(meta.session?.endAt||0) - Date.now());
+        if(remainMs<=0){ await update(metaRef,{ended:true}); await update(ref(db,`rooms/${room}/memory/state`),{lock:true}); return; }
+        if(meta.session && newRound>meta.session.roundsMax){ await update(metaRef,{ended:true}); await update(ref(db,`rooms/${room}/memory/state`),{lock:true}); return; }
+
+        const {start,end} = sliceIndicesForRound(meta, newRound, order.length);
+        const indices = order.slice(start,end);
+        const subset  = indices.map(i=> pairs[i]);
+
+        const cols = Math.max(2, Math.min(8, Number($("memCols").value||4)));
+        const pts  = Number($("memPts").value||5);
+        const deck=[]; let cid=0; subset.forEach((p,idx)=>{ deck.push({id:cid++, pair:idx, text:p.q}); deck.push({id:cid++, pair:idx, text:p.a}); });
+        for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
+        await update(ref(db,`rooms/${room}/memory/state`),{ cols, pts, deck: deck.map(c=>({id:c.id,pair:c.pair,text:c.text,removed:false})), flipped:[], lock:false });
+        await update(metaRef,{ round:newRound, left: subset.length, transitioning:false });
+      }catch(e){ console.error('createOrAdvanceRound error', e); alert('Không tạo được ván: '+(e?.message||e)); }
+    }
+
+    function bindSession(room){
+      onValue(ref(db,`rooms/${room}/memory/meta`), async (snap)=>{
+        const meta=snap.val()||{};
+        $("roundBadge").textContent = meta.round || '-';
+        $("roundMax").textContent  = meta.session?.roundsMax || '-';
+        if(tickTimer) clearInterval(tickTimer);
+        tickTimer = setInterval(async ()=>{
+          const s=meta.session; if(!s){ $("countdown").textContent='--:--'; return; }
+          const now=Date.now(); const remain=Math.max(0,(s.endAt||0)-now);
+          const m=Math.floor(remain/60000), ss=Math.floor((remain%60000)/1000);
+          $("countdown").textContent = `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+          if(remain<=0 && !meta.ended){ await update(ref(db,`rooms/${room}/memory/meta`),{ended:true}); await update(ref(db,`rooms/${room}/memory/state`),{lock:true}); }
+        },500);
+
+        // Auto next round khi lật hết và còn thời gian
+        if(meta.left===0 && !meta.ended && meta.session && (meta.round||0) < (meta.session.roundsMax||0)){
+          const remain = Math.max(0,(meta.session.endAt||0)-Date.now());
+          if(remain>0 && !meta.transitioning && !autoAdvanceLock){
+            autoAdvanceLock=true;
+            await update(ref(db,`rooms/${room}/memory/meta`),{transitioning:true});
+            await createOrAdvanceRound(room,true);
+            autoAdvanceLock=false;
           }
         }
-        $("queue").innerHTML = loadedPairs.length
-          ? `<div class='q'>Đã nạp <strong>${loadedPairs.length}</strong> cặp. Bấm "Bắt đầu ván" để tạo bàn.</div>`
-          : `<div class='muted'>(Chưa có cặp)</div>`;
-      };
+      });
+    }
 
-      // ===== Bắt đầu/Next ván =====
-      $("startRound").onclick = async () => {
-        await createRound(false);
-      };
-      $("nextRound").onclick = async () => {
-        await createRound(true);
-      };
-
-      async function createRound(incrementRound) {
-        const room = roomIdGlobal || $("roomId").value.trim().toUpperCase();
-        if (!room) return alert("Nhập mã phòng");
-        if (!loadedPairs.length) return alert("Hãy tải CSV/JSON cặp Q/A");
-
-        const cols = Math.max(2, Math.min(8, Number($("memCols").value || 4)));
-        const pts = Number($("memPts").value || 5);
-        const limitSec = Math.max(5, Number($("limitSec").value || 120));
-        const now = Date.now();
-        const endAt = now + limitSec * 1000;
-
-        // deck
-        const deck = [];
-        let cid = 0;
-        loadedPairs.forEach((p, idx) => {
-          deck.push({ id: cid++, pair: idx, text: p.q });
-          deck.push({ id: cid++, pair: idx, text: p.a });
-        });
-        for (let i = deck.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [deck[i], deck[j]] = [deck[j], deck[i]];
-        }
-
-        const state = {
-          cols,
-          pts,
-          deck: deck.map((c) => ({
-            id: c.id,
-            pair: c.pair,
-            text: c.text,
-            removed: false,
-          })),
-          flipped: [],
-          lock: false,
-        };
-        const metaRef = ref(db, `rooms/${room}/memory/meta`);
-        const prev = (await get(metaRef)).val() || {};
-        const round = incrementRound
-          ? Number(prev.round || 0) + 1
-          : Number(prev.round || 0) || 1;
-
-        await update(ref(db, `rooms/${room}/memory/state`), state);
-        await update(metaRef, {
-          left: loadedPairs.length,
-          round,
-          limitSec,
-          startAt: now,
-          endAt,
-          ended: false,
-        });
-        alert(`Đã tạo bàn ${deck.length} thẻ (Ván ${round}, ${limitSec}s)`);
-      }
-
-      // ===== Xoá bàn =====
-      $("resetRound").onclick = async () => {
-        const room = roomIdGlobal || $("roomId").value.trim().toUpperCase();
-        if (!room) return alert("Nhập mã phòng");
-        await remove(ref(db, `rooms/${room}/memory`));
-        alert("Đã xoá bàn. Bạn có thể bắt đầu ván mới.");
-      };
-
-      // ===== Export điểm CSV =====
-      $("exportCsv").onclick = async () => {
-        const room = roomIdGlobal || $("roomId").value.trim().toUpperCase();
-        if (!room) return alert("Nhập mã phòng");
-        const scores = (await get(ref(db, `rooms/${room}/scores`))).val() || {};
-        const rows = [["name", "score"]];
-        Object.values(scores).forEach((s) => rows.push([s.name, s.score || 0]));
-        const csv = rows
-          .map((r) =>
-            r.map((x) => `"${String(x).replace(/"/g, '""')}"`).join(",")
-          )
-          .join("\n");
-        const blob = new Blob(["\ufeff" + csv], {
-          type: "text/csv;charset=utf-8;",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `scoreboard_${Date.now()}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-      };
-    </script>
-  </body>
+    // ====== Export điểm ======
+    $("exportCsv").onclick = async ()=>{
+      const room = roomIdGlobal || $("roomId").value.trim().toUpperCase(); if(!room) return alert('Nhập mã phòng');
+      const scores=(await get(ref(db,`rooms/${room}/scores`))).val()||{}; const rows=[["name","score"]]; Object.values(scores).forEach(s=> rows.push([s.name,s.score||0]));
+      const csv = rows.map(r=> r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`scoreboard_${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
+    };
+  </script>
+</body>
 </html>
