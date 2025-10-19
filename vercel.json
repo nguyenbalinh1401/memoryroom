@@ -1,8 +1,8 @@
 {
   "cleanUrls": true,
-  "routes": [
-    { "src": "^/$", "dest": "/player.html" },
-    { "src": "^/host$", "dest": "/host.html" },
-    { "src": "^/player$", "dest": "/player.html" }
+  "rewrites": [
+    { "source": "/", "destination": "/player.html" },
+    { "source": "/host", "destination": "/host.html" },
+    { "source": "/player", "destination": "/player.html" }
   ]
 }
