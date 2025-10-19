@@ -1,8 +1,8 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/", "destination": "/player.html" },
+    { "source": "/", "destination": "/index.html" },
     { "source": "/host", "destination": "/host.html" },
-    { "source": "/player", "destination": "/player.html" }
+    { "source": "/player", "destination": "/index.html" }
   ]
 }
