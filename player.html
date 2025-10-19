@@ -22,6 +22,8 @@
     .muted{color:var(--muted)} .pill{background:#0e1533;border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:999px;color:#cfe0ff;font-weight:600;display:inline-flex;gap:8px;align-items:center}
     .hr{height:1px;background:rgba(255,255,255,.08);margin:14px 0}
     .ans{background:#0c1330;border:1px solid rgba(255,255,255,.12);padding:14px;border-radius:14px;min-height:120px;font-size:18px;line-height:1.3;color:#eaf0ff;white-space:normal;word-break:break-word;display:flex;align-items:center;justify-content:center}
+    .ans:disabled{color:#eaf0ff;opacity:0.95}
+    .ans.hidden:disabled{color:#ffb3b3}
     @media(max-width:640px){.ans{min-height:90px;font-size:16px}}
     .ans.hidden{color:#ff7a7a;font-weight:800}
     .ans.revealed{background:#0f1a44;border-color:#6ea8ff;box-shadow:0 0 0 2px rgba(110,168,255,.18) inset}
@@ -103,7 +105,7 @@
         st.deck.forEach(card=>{
           const btn=document.createElement('button'); const flipped=(st.flipped||[]).includes(card.id);
           btn.className='ans ' + ((flipped||card.removed)?'revealed':'hidden'); btn.style.height='120px';
-          btn.disabled=card.removed || st.lock || ended; btn.textContent=(flipped||card.removed)? card.text : '❓';
+          btn.disabled=card.removed || st.lock || ended; btn.textContent=(flipped||card.removed)? card.text : '?' ;
           if(card.removed) btn.style.visibility='hidden'; btn.onclick = ()=> flipCard(card.id); board.appendChild(btn);
         });
         $("hint").textContent = ended? 'Hết thời gian hoặc kết thúc phiên. Chờ host.' : (st.lock? 'Đang kiểm tra cặp…' : 'Chọn 2 thẻ để lật');
