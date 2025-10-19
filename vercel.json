@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "routes": [
+    { "src": "^/$", "dest": "/player.html" },
+    { "src": "^/host$", "dest": "/host.html" },
+    { "src": "^/player$", "dest": "/player.html" }
+  ]
+}
