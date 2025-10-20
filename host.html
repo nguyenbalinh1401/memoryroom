@@ -32,15 +32,25 @@
 </head>
 <body>
   <div class="wrap">
-    <h1><img class="logo" id="logo" src="https://images.prismic.io/quizlet-web/ZuOC_7VsGrYSvUXJ_VI-VN7Match.png?auto=format,compress" alt="logo"/> MemoryRoom 🎴 – Host</h1>
-    <p class="sub">Phiên chơi với một <strong>đồng hồ tổng</strong>. Câu hỏi từ <strong>một CSV duy nhất</strong> sẽ được tự động chia thành các vòng 6–7 câu; khi lật hết và còn thời gian, trò chơi tự chuyển vòng.</p>
+    <h1>
+      <img class="logo" id="logo"
+           src="https://images.prismic.io/quizlet-web/ZuOC_7VsGrYSvUXJ_VI-VN7Match.png?auto=format,compress"
+           alt="logo"/>
+      MemoryRoom 🎴 – Host
+    </h1>
+    <p class="sub">
+      Host phát <strong>một CSV duy nhất</strong> làm bộ đề chung. Người chơi vào cùng room nhưng mỗi người có <strong>session riêng</strong> (bàn riêng), và
+      <strong>đồng hồ tổng</strong> của phiên áp dụng cho tất cả.
+    </p>
 
     <div class="card">
-      <div class="row" style="justify-content:space-between"><strong>Bảng điều khiển</strong>
+      <div class="row" style="justify-content:space-between">
+        <strong>Bảng điều khiển</strong>
         <span class="pill">Trạng thái: <span id="status">Chưa vào phòng</span></span>
       </div>
+
       <div class="row" style="gap:8px;margin-top:8px">
-        <span class="pill">Vòng: <span id="roundBadge">-</span>/<span id="roundMax">-</span></span>
+        <span class="pill">Vòng tối đa: <span id="roundMax">-</span></span>
         <span class="pill">⏱ Còn: <span id="countdown">--:--</span></span>
       </div>
 
@@ -51,6 +61,7 @@
         <button id="enterRoom">Vào phòng</button>
         <button class="ghost" id="copyLink">Copy link người chơi</button>
       </div>
+
       <div class="row">
         <input id="logoInput" placeholder="Dán URL logo lớp (PNG/JPG)"/>
         <label class="muted">Màu chủ đạo:</label>
@@ -63,9 +74,8 @@
       <div class="row">
         <input type="file" id="fileInput" accept=".csv,.json"/>
         <button id="loadPairs" class="ghost">Tải cặp Q/A</button>
-        <label>Điểm/cặp</label><input id="memPts" type="number" value="5"/>
-        <label>Cột</label><input id="memCols" type="number" value="4" min="2" max="8"/>
-        <label>Tổng thời gian (giây)</label><input id="sessionSec" type="number" value="300" min="30" step="10"/>
+        <label>Tổng thời gian (giây)</label>
+        <input id="sessionSec" type="number" value="300" min="30" step="10"/>
         <button id="startSession">Bắt đầu phiên</button>
         <button class="ghost" id="resetSession">Kết thúc phiên</button>
       </div>
@@ -74,8 +84,18 @@
 
       <div class="hr"></div>
       <div>
-        <div class="row"><strong>Người chơi</strong><span class="pill" id="playerCount">0</span><button class="ghost" id="exportCsv">Xuất điểm CSV</button></div>
+        <div class="row">
+          <strong>Người chơi</strong>
+          <span class="pill" id="playerCount">0</span>
+          <button class="ghost" id="exportCsv">Xuất điểm CSV</button>
+        </div>
         <div class="players" id="players"></div>
+      </div>
+
+      <div class="hr"></div>
+      <div>
+        <div class="row"><strong>Tiến độ theo người chơi</strong></div>
+        <div id="progress" class="list"></div>
       </div>
 
       <div class="hr"></div>
@@ -85,44 +105,156 @@
       </div>
     </div>
 
-    <p class="muted" style="margin-top:14px">CSV mẫu: <code>question,answer</code> mỗi dòng là một cặp. JSON: <code>[{q,a},...]</code> hoặc <code>{pairs:[...]}</code>.</p>
+    <p class="muted" style="margin-top:14px">
+      CSV mẫu: <code>question,answer</code> mỗi dòng là một cặp. JSON: <code>[{q,a},...]</code> hoặc <code>{pairs:[...]}</code>.
+    </p>
   </div>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-    import { getDatabase, ref, set, onValue, update, get, remove } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js';
+    import { getDatabase, ref, set, onValue, update, get } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js';
 
     // === FIREBASE CONFIG ===
-    const firebaseConfig = { apiKey:"AIzaSyDA3fp5A2cGB63kMA8TlEJ2x49rr4DiYbA", authDomain:"game-75e2a.firebaseapp.com", databaseURL:"https://game-75e2a-default-rtdb.asia-southeast1.firebasedatabase.app", projectId:"game-75e2a", storageBucket:"game-75e2a.firebasestorage.app", messagingSenderId:"763894782961", appId:"1:763894782961:web:84465068beb77de8024250", measurementId:"G-E10MQ37X5Y" };
-    const app = initializeApp(firebaseConfig); const db = getDatabase(app);
+    const firebaseConfig = {
+      apiKey:"AIzaSyDA3fp5A2cGB63kMA8TlEJ2x49rr4DiYbA",
+      authDomain:"game-75e2a.firebaseapp.com",
+      databaseURL:"https://game-75e2a-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId:"game-75e2a",
+      storageBucket:"game-75e2a.firebasestorage.app",
+      messagingSenderId:"763894782961",
+      appId:"1:763894782961:web:84465068beb77de8024250",
+      measurementId:"G-E10MQ37X5Y"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
 
     const $ = (id)=>document.getElementById(id);
-    let roomIdGlobal=null, tickTimer=null, autoAdvanceLock=false, loadedPairs=[];
-    const MAX_PER_ROUND = 7; // 6–7 câu/vòng
+    let roomIdGlobal=null, tickTimer=null, loadedPairs=[];
 
     // ====== Vào phòng ======
     $("enterRoom").onclick = async ()=>{
-      const room = $("roomId").value.trim().toUpperCase(); if(!room) return alert('Nhập mã phòng');
-      roomIdGlobal = room; await update(ref(db,`rooms/${room}`),{createdAt:Date.now()});
+      const room = $("roomId").value.trim().toUpperCase();
+      if(!room) return alert('Nhập mã phòng');
+      roomIdGlobal = room;
+      await update(ref(db,`rooms/${room}`),{createdAt:Date.now()});
       $("status").textContent = `Đã vào phòng ${room}`;
-      bindPlayers(room); bindScores(room); bindSession(room);
-      $("copyLink").onclick = async ()=>{ const url = `${location.origin}${location.pathname.replace('host','player')}?room=${room}`; await navigator.clipboard.writeText(url); alert('Đã sao chép link người chơi: '+url); };
+      bindPlayers(room);
+      bindScores(room);
+      bindSession(room);
+      bindProgress(room);
+      $("copyLink").onclick = async ()=>{
+        const url = `${location.origin}${location.pathname.replace('host','player')}?room=${room}`;
+        await navigator.clipboard.writeText(url);
+        alert('Đã sao chép link người chơi: '+url);
+      };
     };
 
     // ====== Branding ======
-    $("applyBrand").onclick = ()=>{ const url=$("logoInput").value.trim(); if(url) $("logo").src=url; const col=$("colorInput").value; if(col) document.documentElement.style.setProperty('--accent', col); };
+    $("applyBrand").onclick = ()=>{
+      const url=$("logoInput").value.trim();
+      if(url) $("logo").src = url;
+      const col=$("colorInput").value;
+      if(col) document.documentElement.style.setProperty('--accent', col);
+    };
 
     // ====== Players & Scores ======
-    function bindPlayers(room){ onValue(ref(db,`rooms/${room}/players`),(snap)=>{ const players=snap.val()||{}; const ids=Object.keys(players); $("playerCount").textContent=ids.length; $("players").innerHTML=''; ids.forEach(id=>{ const p=players[id]; const chip=document.createElement('div'); chip.className='player'; chip.textContent=`${p.name} • ${p.score||0}`; $("players").appendChild(chip); }); }); }
-    function bindScores(room){ onValue(ref(db,`rooms/${room}/scores`),(snap)=>{ const scores=snap.val()||{}; const arr=Object.values(scores).sort((a,b)=>(b.score||0)-(a.score||0)); $("scoreboard").innerHTML=''; arr.forEach((s,i)=>{ const div=document.createElement('div'); div.className='q'; div.innerHTML=`<div class='row' style='justify-content:space-between'><div><strong>${i+1}. ${s.name}</strong></div><div>${s.score||0} điểm</div></div>`; $("scoreboard").appendChild(div); }); }); }
+    function bindPlayers(room){
+      onValue(ref(db,`rooms/${room}/players`),(snap)=>{
+        const players=snap.val()||{};
+        const ids=Object.keys(players);
+        $("playerCount").textContent=ids.length;
+        $("players").innerHTML='';
+        ids.forEach(id=>{
+          const p=players[id];
+          const chip=document.createElement('div');
+          chip.className='player';
+          chip.textContent=`${p.name} • ${p.score||0}`;
+          $("players").appendChild(chip);
+        });
+      });
+    }
 
-    // ====== Nạp cặp ======
+    function bindScores(room){
+      onValue(ref(db,`rooms/${room}/scores`),(snap)=>{
+        const scores=snap.val()||{};
+        const arr=Object.values(scores).sort((a,b)=>(b.score||0)-(a.score||0));
+        $("scoreboard").innerHTML='';
+        arr.forEach((s,i)=>{
+          const div=document.createElement('div');
+          div.className='q';
+          div.innerHTML=`<div class='row' style='justify-content:space-between'>
+            <div><strong>${i+1}. ${s.name}</strong></div>
+            <div>${s.score||0} điểm</div>
+          </div>`;
+          $("scoreboard").appendChild(div);
+        });
+      });
+    }
+
+    // ====== Tiến độ từng người (round/left cá nhân) ======
+    function bindProgress(room){
+      onValue(ref(db, `rooms/${room}/sessions`), async (snap)=>{
+        const data = snap.val() || {};
+        const scores = (await get(ref(db,`rooms/${room}/scores`))).val() || {};
+        const players = (await get(ref(db,`rooms/${room}/players`))).val() || {};
+        $("progress").innerHTML = "";
+        Object.keys(data).forEach(pid=>{
+          const meta = data[pid]?.meta || {};
+          const name = players[pid]?.name || pid;
+          const score = scores[pid]?.score || 0;
+          const div = document.createElement("div");
+          div.className="q";
+          div.innerHTML = `
+            <div class="row" style="justify-content:space-between">
+              <div><strong>${name}</strong></div>
+              <div>Vòng: <b>${meta.round ?? '-'}</b></div>
+              <div>Còn cặp: <b>${Number.isFinite(meta.left)? meta.left : '--'}</b></div>
+              <div>Điểm: <b>${score}</b></div>
+            </div>`;
+          $("progress").appendChild(div);
+        });
+      });
+    }
+
+    // ====== Nạp cặp (CSV/JSON) ======
     $("loadPairs").onclick = ()=> $("fileInput").click();
+
+    // tách CSV chuẩn (không tách trong dấu nháy)
+    function smartSplitCSV(line){
+      const out=[]; let cur='', inQuotes=false;
+      for(let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch==='\"'){
+          if(inQuotes && line[i+1]==='\"'){ cur+='\"'; i++; } // escape ""
+          else inQuotes=!inQuotes;
+        } else if(ch===',' && !inQuotes){
+          out.push(cur); cur='';
+        } else cur+=ch;
+      }
+      out.push(cur);
+      return out;
+    }
+
     $("fileInput").onchange = async (e)=>{
-      const f=e.target.files[0]; if(!f) return; const text=await f.text(); loadedPairs=[];
-      if(f.name.endsWith('.json')){ const j=JSON.parse(text); loadedPairs = Array.isArray(j)? j : (j.pairs||[]); }
-      else { const lines=text.split(/\r?\n/).filter(Boolean); const start = lines[0].toLowerCase().includes('question')?1:0; for(let i=start;i<lines.length;i++){ const [q,a] = lines[i].split(','); if(q && a) loadedPairs.push({q,a}); } }
-      $("queue").innerHTML = loadedPairs.length? `<div class='q'>Đã nạp <strong>${loadedPairs.length}</strong> cặp. Bấm "Bắt đầu phiên".</div>` : `<div class='muted'>(Chưa có cặp)</div>`;
+      const f=e.target.files[0]; if(!f) return;
+      const text=await f.text();
+      loadedPairs=[];
+      if(f.name.endsWith('.json')){
+        const j=JSON.parse(text);
+        loadedPairs = Array.isArray(j)? j : (j.pairs||[]);
+      } else {
+        const lines=text.split(/\r?\n/).filter(Boolean);
+        const first = lines[0].toLowerCase();
+        const start = (first.includes('question') && first.includes('answer')) ? 1 : 0;
+        for(let i=start;i<lines.length;i++){
+          const cols = smartSplitCSV(lines[i]).map(s=>s.replace(/^"(.*)"$/,'$1'));
+          const q = cols[0], a = cols[1];
+          if(q && a) loadedPairs.push({q,a});
+        }
+      }
+      $("queue").innerHTML = loadedPairs.length
+        ? `<div class='q'>Đã nạp <strong>${loadedPairs.length}</strong> cặp. Bấm "Bắt đầu phiên".</div>`
+        : `<div class='muted'>(Chưa có cặp)</div>`;
     };
 
     // ====== Phiên chơi (đồng hồ tổng) ======
@@ -131,106 +263,76 @@
         const room = roomIdGlobal || $("roomId").value.trim().toUpperCase();
         if(!room) return alert('Nhập mã phòng');
         if(!loadedPairs.length) return alert('Hãy tải CSV/JSON cặp Q/A');
+
+        const MAX_PER_ROUND = 7;
         const totalSec = Math.max(30, Number($("sessionSec").value||300));
 
-        // Chia vòng 6–7: tính roundsMax, baseSize(=6) và số vòng đầu có 7 câu (extra)
-        const n=loadedPairs.length; const roundsMax = Math.ceil(n/MAX_PER_ROUND);
-        const baseSize = Math.floor(n/roundsMax); // 6
-        const extra    = n % roundsMax;           // số vòng 7 câu đầu tiên
+        // Tính số vòng 6–7 câu
+        const n=loadedPairs.length;
+        const roundsMax = Math.ceil(n / MAX_PER_ROUND);
+        const baseSize  = Math.floor(n / roundsMax); // thường = 6
+        const extra     = n % roundsMax;             // số vòng đầu có 7 câu
 
         // Thứ tự ngẫu nhiên để chia vòng
         const order=[...Array(n).keys()];
-        for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+        for(let i=order.length-1;i>0;i--){
+          const j=Math.floor(Math.random()*(i+1));
+          [order[i],order[j]]=[order[j],order[i]];
+        }
 
         const now=Date.now(); const endAt = now + totalSec*1000;
+
+        // Phát đề + order chung cho room
         await set(ref(db,`rooms/${room}/memory/pairs`), loadedPairs);
         await set(ref(db,`rooms/${room}/memory/order`), order);
+
+        // Chỉ set meta phiên (không tạo state cấp room)
         await update(ref(db,`rooms/${room}/memory/meta`), {
-          session:{ totalSec: totalSec, startAt: now, endAt: endAt, roundsMax, baseSize, extra },
-          round: 0, left: 0, ended:false, transitioning:false
+          session:{ totalSec, startAt: now, endAt, roundsMax, baseSize, extra },
+          ended:false
         });
-        await createOrAdvanceRound(room, true);
-      }catch(e){ console.error('startSession error', e); alert('Không thể bắt đầu phiên: '+(e?.message||e)); }
+
+        alert(`Đã bắt đầu phiên ${totalSec}s – ${n} cặp → ${roundsMax} vòng (mỗi vòng 6–7 câu).`);
+      }catch(e){
+        console.error('startSession error', e);
+        alert('Không thể bắt đầu phiên: '+(e?.message||e));
+      }
     };
 
     $("resetSession").onclick = async ()=>{
-      const room = roomIdGlobal || $("roomId").value.trim().toUpperCase(); if(!room) return alert('Nhập mã phòng');
+      const room = roomIdGlobal || $("roomId").value.trim().toUpperCase();
+      if(!room) return alert('Nhập mã phòng');
       await update(ref(db,`rooms/${room}/memory/meta`),{ended:true});
-      await update(ref(db,`rooms/${room}/memory/state`),{lock:true});
       alert('Đã kết thúc phiên.');
     };
 
-    function sliceIndicesForRound(meta, roundIndex, orderLen){
-      const base = meta.session?.baseSize || 6; const extra = meta.session?.extra || 0;
-      const prior7 = Math.min(roundIndex-1, extra);
-      const prior6 = Math.max(0, (roundIndex-1)-extra);
-      const start  = prior7*(base+1) + prior6*base;
-      const len    = (roundIndex-1)<extra ? (base+1) : base;
-      const end    = Math.min(start+len, orderLen);
-      return {start,end};
-    }
-
-    async function createOrAdvanceRound(room, advance){
-      try{
-        const metaRef=ref(db,`rooms/${room}/memory/meta`);
-        const pairsRef=ref(db,`rooms/${room}/memory/pairs`);
-        const orderRef=ref(db,`rooms/${room}/memory/order`);
-        const meta=(await get(metaRef)).val()||{};
-        const pairs=(await get(pairsRef)).val()||[];
-        const order=(await get(orderRef)).val()||[];
-        if(!pairs.length){ alert('Chưa có bộ cặp để tạo ván'); return; }
-
-        const newRound = advance ? Number(meta.round||0)+1 : (meta.round||1);
-        const remainMs = Math.max(0,(meta.session?.endAt||0) - Date.now());
-        if(remainMs<=0){ await update(metaRef,{ended:true}); await update(ref(db,`rooms/${room}/memory/state`),{lock:true}); return; }
-        if(meta.session && newRound>meta.session.roundsMax){ await update(metaRef,{ended:true}); await update(ref(db,`rooms/${room}/memory/state`),{lock:true}); return; }
-
-        const {start,end} = sliceIndicesForRound(meta, newRound, order.length);
-        const indices = order.slice(start,end);
-        const subset  = indices.map(i=> pairs[i]);
-
-        const cols = Math.max(2, Math.min(8, Number($("memCols").value||4)));
-        const pts  = Number($("memPts").value||5);
-        const deck=[]; let cid=0; subset.forEach((p,idx)=>{ deck.push({id:cid++, pair:idx, text:p.q}); deck.push({id:cid++, pair:idx, text:p.a}); });
-        for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
-        await update(ref(db,`rooms/${room}/memory/state`),{ cols, pts, deck: deck.map(c=>({id:c.id,pair:c.pair,text:c.text,removed:false})), flipped:[], lock:false });
-        await update(metaRef,{ round:newRound, left: subset.length, transitioning:false });
-      }catch(e){ console.error('createOrAdvanceRound error', e); alert('Không tạo được ván: '+(e?.message||e)); }
-    }
-
+    // ====== Đếm ngược (room-level) ======
     function bindSession(room){
-      onValue(ref(db,`rooms/${room}/memory/meta`), async (snap)=>{
-        const meta=snap.val()||{};
-        $("roundBadge").textContent = meta.round || '-';
-        $("roundMax").textContent  = meta.session?.roundsMax || '-';
+      onValue(ref(db,`rooms/${room}/memory/meta/session`),(snap)=>{
+        const s = snap.val() || null;
+        $("roundMax").textContent = s?.roundsMax ?? '-';
         if(tickTimer) clearInterval(tickTimer);
-        tickTimer = setInterval(async ()=>{
-          const s=meta.session; if(!s){ $("countdown").textContent='--:--'; return; }
-          const now=Date.now(); const remain=Math.max(0,(s.endAt||0)-now);
-          const m=Math.floor(remain/60000), ss=Math.floor((remain%60000)/1000);
+        if(!s?.endAt){ $("countdown").textContent='--:--'; return; }
+        tickTimer = setInterval(()=>{
+          const remain = Math.max(0,(s.endAt||0) - Date.now());
+          const m = Math.floor(remain/60000), ss = Math.floor((remain%60000)/1000);
           $("countdown").textContent = `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
-          if(remain<=0 && !meta.ended){ await update(ref(db,`rooms/${room}/memory/meta`),{ended:true}); await update(ref(db,`rooms/${room}/memory/state`),{lock:true}); }
         },500);
-
-        // Auto next round khi lật hết và còn thời gian
-        if(meta.left===0 && !meta.ended && meta.session && (meta.round||0) < (meta.session.roundsMax||0)){
-          const remain = Math.max(0,(meta.session.endAt||0)-Date.now());
-          if(remain>0 && !meta.transitioning && !autoAdvanceLock){
-            autoAdvanceLock=true;
-            await update(ref(db,`rooms/${room}/memory/meta`),{transitioning:true});
-            await createOrAdvanceRound(room,true);
-            autoAdvanceLock=false;
-          }
-        }
       });
     }
 
-    // ====== Export điểm ======
+    // ====== Xuất điểm CSV ======
     $("exportCsv").onclick = async ()=>{
-      const room = roomIdGlobal || $("roomId").value.trim().toUpperCase(); if(!room) return alert('Nhập mã phòng');
-      const scores=(await get(ref(db,`rooms/${room}/scores`))).val()||{}; const rows=[["name","score"]]; Object.values(scores).forEach(s=> rows.push([s.name,s.score||0]));
+      const room = roomIdGlobal || $("roomId").value.trim().toUpperCase();
+      if(!room) return alert('Nhập mã phòng');
+      const scores=(await get(ref(db,`rooms/${room}/scores`))).val()||{};
+      const rows=[["name","score"]];
+      Object.values(scores).forEach(s=> rows.push([s.name, s.score||0]));
       const csv = rows.map(r=> r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
-      const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`scoreboard_${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
+      const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=`scoreboard_${Date.now()}.csv`; a.click();
+      URL.revokeObjectURL(url);
     };
   </script>
 </body>

@@ -1,369 +1,272 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MemoryRoom – Player</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg: #0b1020;
-        --muted: #98a7ff99;
-        --accent: #7aa2ff;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-        background: radial-gradient(
-          900px 600px at 10% 10%,
-          #18214d 0%,
-          #0b1020 60%
-        );
-        color: #fff;
-      }
-      .wrap {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 28px;
-      }
-      h1 {
-        font-size: 28px;
-        margin: 0 0 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .logo {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        object-fit: cover;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-      }
-      .sub {
-        color: var(--muted);
-        margin: 0 0 24px;
-      }
-      .card {
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.04),
-          rgba(255, 255, 255, 0.02)
-        );
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        padding: 18px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      }
-      .row {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      input {
-        width: 100%;
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        background: #0f1530;
-        color: #fff;
-      }
-      button {
-        cursor: pointer;
-        border: 0;
-        background: var(--accent);
-        color: #081126;
-        padding: 12px 16px;
-        border-radius: 12px;
-        font-weight: 700;
-      }
-      button.ghost {
-        background: transparent;
-        color: #cfe0ff;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-      }
-      .muted {
-        color: var(--muted);
-      }
-      .pill {
-        background: #0e1533;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        padding: 6px 10px;
-        border-radius: 999px;
-        color: #cfe0ff;
-        font-weight: 600;
-        display: inline-flex;
-        gap: 8px;
-        align-items: center;
-      }
-      .hr {
-        height: 1px;
-        background: rgba(255, 255, 255, 0.08);
-        margin: 14px 0;
-      }
-      .ans {
-        background: #0c1330;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 14px;
-        border-radius: 14px;
-        min-height: 120px;
-        font-size: 18px;
-        line-height: 1.3;
-        color: #eaf0ff;
-        white-space: normal;
-        word-break: break-word;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .ans:disabled {
-        color: #eaf0ff;
-        opacity: 0.95;
-      }
-      .ans.hidden:disabled {
-        color: #ffb3b3;
-      }
-      @media (max-width: 640px) {
-        .ans {
-          min-height: 90px;
-          font-size: 16px;
-        }
-      }
-      .ans.hidden {
-        color: #ff7a7a;
-        font-weight: 800;
-      }
-      .ans.revealed {
-        background: #0f1a44;
-        border-color: #6ea8ff;
-        box-shadow: 0 0 0 2px rgba(110, 168, 255, 0.18) inset;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <h1>
-        <img class="logo" id="logo" src="https://images.prismic.io/quizlet-web/ZuOC_7VsGrYSvUXJ_VI-VN7Match.png?auto=format,compress" alt="logo" /> MemoryRoom 🎴 – Player
-      </h1>
-      <p class="sub">
-        Một đồng hồ tổng cho nhiều ván: hoàn thành sớm sẽ tự chuyển ván tiếp
-        theo cho tới khi hết thời gian hoặc đạt số ván tối đa.
-      </p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MemoryRoom – Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#0b1020; --muted:#98a7ff99; --accent:#7aa2ff; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(900px 600px at 10% 10%, #18214d 0%, #0b1020 60%);color:#fff}
+    .wrap{max-width:900px;margin:0 auto;padding:28px}
+    h1{font-size:28px;margin:0 0 8px;display:flex;align-items:center;gap:10px}
+    .logo{width:36px;height:36px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,.25)}
+    .sub{color:var(--muted);margin:0 0 24px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:#0f1530;color:#fff}
+    button{cursor:pointer;border:0;background:var(--accent);color:#081126;padding:12px 16px;border-radius:12px;font-weight:700}
+    button.ghost{background:transparent;color:#cfe0ff;border:1px solid rgba(255,255,255,.18)}
+    .muted{color:var(--muted)}
+    .pill{background:#0e1533;border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:999px;color:#cfe0ff;font-weight:600;display:inline-flex;gap:8px;align-items:center}
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:14px 0}
+    .ans{background:#0c1330;border:1px solid rgba(255,255,255,.12);padding:14px;border-radius:14px;min-height:120px;font-size:18px;line-height:1.3;color:#eaf0ff;white-space:normal;word-break:break-word;display:flex;align-items:center;justify-content:center}
+    .ans:disabled{color:#eaf0ff;opacity:.95}
+    .ans.hidden:disabled{color:#ffb3b3}
+    @media (max-width:640px){.ans{min-height:90px;font-size:16px}}
+    .ans.hidden{color:#ff7a7a;font-weight:800}
+    .ans.revealed{background:#0f1a44;border-color:#6ea8ff;box-shadow:0 0 0 2px rgba(110,168,255,.18) inset}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>
+      <img class="logo" id="logo"
+           src="https://images.prismic.io/quizlet-web/ZuOC_7VsGrYSvUXJ_VI-VN7Match.png?auto=format,compress"
+           alt="logo"/>
+      MemoryRoom 🎴 – Player
+    </h1>
+    <p class="sub">Mỗi người chơi có <b>bàn riêng</b> trong cùng một phòng. Hoàn thành sớm sẽ tự chuyển vòng tiếp theo cho tới khi hết thời gian phiên.</p>
 
-      <div class="card">
-        <div class="row">
-          <input id="joinRoom" placeholder="Mã phòng" />
-          <input id="nickname" placeholder="Tên của bạn" />
-          <button id="joinBtn">Tham gia</button>
+    <div class="card">
+      <div class="row">
+        <input id="joinRoom" placeholder="Mã phòng"/>
+        <input id="nickname" placeholder="Tên của bạn"/>
+        <button id="joinBtn">Tham gia</button>
+      </div>
+      <div class="hr"></div>
+
+      <div id="playerArea" style="display:none">
+        <div class="row" style="justify-content:space-between;gap:8px">
+          <span class="pill">Phòng: <span id="roomBadge">-</span></span>
+          <span class="pill">Bạn: <span id="me">-</span></span>
+          <span class="pill">Còn cặp: <span id="memLeft">--</span></span>
+          <span class="pill">Ván: <span id="roundPlayer">-</span>/<span id="roundMax">-</span></span>
+          <span class="pill">⏱ Còn: <span id="timeRemain">--:--</span></span>
         </div>
         <div class="hr"></div>
-        <div id="playerArea" style="display: none">
-          <div class="row" style="justify-content: space-between; gap: 8px">
-            <span class="pill">Phòng: <span id="roomBadge">-</span></span>
-            <span class="pill">Bạn: <span id="me">-</span></span>
-            <span class="pill">Còn cặp: <span id="memLeft">--</span></span>
-            <span class="pill"
-              >Ván: <span id="roundPlayer">-</span>/<span id="roundMax"
-                >-</span
-              ></span
-            >
-            <span class="pill">⏱ Còn: <span id="timeRemain">--:--</span></span>
-          </div>
-          <div class="hr"></div>
-          <div id="board" style="display: grid; gap: 12px"></div>
-          <div class="muted" id="hint">Chọn 2 thẻ để lật</div>
-        </div>
+        <div id="board" style="display:grid;gap:12px"></div>
+        <div class="muted" id="hint">Chọn 2 thẻ để lật</div>
       </div>
     </div>
+  </div>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-      import {
-        getDatabase,
-        ref,
-        onValue,
-        update,
-        get,
-      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update, set, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-      // === CONFIG GIỐNG HOST ===
-      const firebaseConfig = {
-        apiKey: "AIzaSyDA3fp5A2cGB63kMA8TlEJ2x49rr4DiYbA",
-        authDomain: "game-75e2a.firebaseapp.com",
-        databaseURL:
-          "https://game-75e2a-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "game-75e2a",
-        storageBucket: "game-75e2a.firebasestorage.app",
-        messagingSenderId: "763894782961",
-        appId: "1:763894782961:web:84465068beb77de8024250",
-        measurementId: "G-E10MQ37X5Y",
-      };
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
+    // Firebase config (giống host)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDA3fp5A2cGB63kMA8TlEJ2x49rr4DiYbA",
+      authDomain: "game-75e2a.firebaseapp.com",
+      databaseURL: "https://game-75e2a-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "game-75e2a",
+      storageBucket: "game-75e2a.firebasestorage.app",
+      messagingSenderId: "763894782961",
+      appId: "1:763894782961:web:84465068beb77de8024250",
+      measurementId: "G-E10MQ37X5Y",
+    };
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
 
-      const $ = (id) => document.getElementById(id);
-      function qp(name) {
-        const u = new URL(location.href);
-        return u.searchParams.get(name);
-      }
-      const roomFromUrl = qp("room");
-      if (roomFromUrl) $("joinRoom").value = roomFromUrl;
+    const $ = (id) => document.getElementById(id);
+    const qp = (name)=> new URL(location.href).searchParams.get(name);
+    const roomFromUrl = qp("room"); if(roomFromUrl) $("joinRoom").value = roomFromUrl;
 
-      let joinedRoomId = null,
-        myId = null,
-        sessionTimer = null;
+    let joinedRoomId=null, myId=null, sessionTimer=null;
+    let cachedPairs=null, cachedOrder=null, cachedSessMeta=null; // room-level metadata
+    const DEFAULT_COLS = 4;
 
-      $("joinBtn").onclick = async () => {
-        const room = $("joinRoom").value.trim().toUpperCase();
-        const name = $("nickname").value.trim();
-        if (!room || !name) return alert("Nhập mã phòng & tên");
-        joinedRoomId = room;
-        myId = "p_" + Math.random().toString(36).slice(2, 8);
-        await update(ref(db, `rooms/${room}/players/${myId}`), {
-          name,
-          score: 0,
-          joinedAt: Date.now(),
-        });
-        await update(ref(db, `rooms/${room}/scores/${myId}`), {
-          name,
-          score: 0,
-        });
-        $("playerArea").style.display = "block";
-        $("roomBadge").textContent = room;
-        $("me").textContent = name;
-        bindMeta();
-        bindBoard();
-      };
+    // ---- JOIN ----
+    $("joinBtn").onclick = async ()=>{
+      const room=$("joinRoom").value.trim().toUpperCase();
+      const name=$("nickname").value.trim();
+      if(!room || !name) return alert("Nhập mã phòng & tên");
 
-      // >>> Timer & round info – dựa trên meta & meta/session
-      function bindMeta() {
-        const metaRef = ref(db, `rooms/${joinedRoomId}/memory/meta`);
-        const sessRef = ref(db, `rooms/${joinedRoomId}/memory/meta/session`);
+      joinedRoomId=room;
+      myId = "p_" + Math.random().toString(36).slice(2,8);
 
-        // round & roundMax
-        onValue(metaRef, (snap) => {
-          const meta = snap.val() || {};
-          $("roundPlayer").textContent = meta.round || "-";
-          $("roundMax").textContent = meta.session?.roundsMax ?? "-";
-        });
+      await update(ref(db,`rooms/${room}/players/${myId}`), {name, score:0, joinedAt:Date.now()});
+      await update(ref(db,`rooms/${room}/scores/${myId}`),  {name, score:0});
 
-        // timer: đếm theo session.endAt
-        onValue(sessRef, (snap) => {
-          const s = snap.val();
-          if (sessionTimer) clearInterval(sessionTimer);
-          if (!s || !s.endAt) {
-            $("timeRemain").textContent = "--:--";
-            return;
-          }
-          sessionTimer = setInterval(() => {
-            const remain = Math.max(0, s.endAt - Date.now());
-            const m = Math.floor(remain / 60000),
-              ss = Math.floor((remain % 60000) / 1000);
-            $("timeRemain").textContent = `${String(m).padStart(
-              2,
-              "0"
-            )}:${String(ss).padStart(2, "0")}`;
-          }, 500);
-        });
+      $("playerArea").style.display='block';
+      $("roomBadge").textContent=room; $("me").textContent=name;
+
+      await bindRoomSession();   // timer + roundsMax + load pairs/order
+      await bindMySession();     // round + state render
+    };
+
+    // ---- ROOM-LEVEL: timer & roundsMax & pairs/order ----
+    async function bindRoomSession(){
+      onValue(ref(db, `rooms/${joinedRoomId}/memory/meta/session`), (snap)=>{
+        cachedSessMeta = snap.val() || null;
+        $("roundMax").textContent = cachedSessMeta?.roundsMax ?? "-";
+        // timer
+        if(sessionTimer) clearInterval(sessionTimer);
+        if(!cachedSessMeta?.endAt){ $("timeRemain").textContent="--:--"; return; }
+        sessionTimer = setInterval(()=>{
+          const remain = Math.max(0, cachedSessMeta.endAt - Date.now());
+          const m = Math.floor(remain/60000), s = Math.floor((remain%60000)/1000);
+          $("timeRemain").textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }, 500);
+      });
+
+      // Pairs & order (dùng chung cho cả room)
+      const pairsSnap = await get(ref(db, `rooms/${joinedRoomId}/memory/pairs`));
+      const orderSnap = await get(ref(db, `rooms/${joinedRoomId}/memory/order`));
+      cachedPairs = pairsSnap.val() || [];
+      cachedOrder = orderSnap.val() || [];
+    }
+
+    // ---- PLAYER SESSION: meta + state (deck riêng) ----
+    async function bindMySession(){
+      const myMetaRef  = ref(db, `rooms/${joinedRoomId}/sessions/${myId}/meta`);
+      const myStateRef = ref(db, `rooms/${joinedRoomId}/sessions/${myId}/state`);
+
+      // nếu chưa có round -> set 1 và tạo bàn đầu
+      const m = (await get(myMetaRef)).val();
+      if(!m || !m.round){
+        await set(myMetaRef, { round: 1, left: 0 });
+        await ensureRoundState(1);
       }
 
-      function bindBoard() {
-        onValue(ref(db, `rooms/${joinedRoomId}/memory/state`), async (snap) => {
-          const st = snap.val();
-          const board = $("board");
-          if (!st) {
-            board.innerHTML =
-              '<div class="muted">Chờ host bắt đầu phiên…</div>';
-            return;
-          }
+      // theo dõi meta của tôi (round/left)
+      onValue(myMetaRef, (snap)=>{
+        const meta = snap.val() || {};
+        $("roundPlayer").textContent = meta.round ?? "-";
+        $("memLeft").textContent = (Number.isFinite(meta.left) ? meta.left : "--");
+      });
 
-          const meta =
-            (await get(ref(db, `rooms/${joinedRoomId}/memory/meta`))).val() ||
-            {};
-          // Fallback "còn cặp" nếu meta.left chưa sẵn sàng
-          const leftFallback = Math.floor(
-            (st.deck || []).filter((c) => !c.removed).length / 2
-          );
-          const left = Number.isFinite(meta.left) ? meta.left : leftFallback;
-          $("memLeft").textContent = left;
-
-          // Chỉ kết thúc khi meta.ended === true
-          const ended = meta.ended === true;
-
-          board.style.gridTemplateColumns = `repeat(${
-            st.cols || 4
-          }, minmax(0,1fr))`;
-          board.innerHTML = "";
-          (st.deck || []).forEach((card) => {
-            const btn = document.createElement("button");
-            const flipped = (st.flipped || []).includes(card.id);
-            btn.className =
-              "ans " + (flipped || card.removed ? "revealed" : "hidden");
-            btn.style.height = "120px";
-            btn.disabled = card.removed || st.lock || ended;
-            btn.textContent = flipped || card.removed ? card.text : "?";
-            if (card.removed) btn.style.visibility = "hidden";
-            btn.onclick = () => flipCard(card.id);
-            board.appendChild(btn);
-          });
-
-          $("hint").textContent = ended
-            ? "Hết thời gian hoặc kết thúc phiên. Chờ host."
-            : st.lock
-            ? "Đang kiểm tra cặp…"
-            : "Chọn 2 thẻ để lật";
+      // theo dõi state của tôi để render board
+      onValue(myStateRef, async (snap)=>{
+        const st = snap.val();
+        const board = $("board");
+        if(!st){
+          board.innerHTML = '<div class="muted">Chờ khởi tạo bàn…</div>';
+          return;
+        }
+        const ended = !!(cachedSessMeta && (cachedSessMeta.endAt || 0) <= Date.now());
+        board.style.gridTemplateColumns = `repeat(${st.cols||DEFAULT_COLS}, minmax(0,1fr))`;
+        board.innerHTML = "";
+        (st.deck||[]).forEach(card=>{
+          const btn = document.createElement("button");
+          const flipped = (st.flipped||[]).includes(card.id);
+          btn.className = "ans " + ((flipped||card.removed)? "revealed":"hidden");
+          btn.style.height="120px";
+          btn.disabled = card.removed || st.lock || ended;
+          btn.textContent = (flipped||card.removed) ? card.text : "?";
+          if(card.removed) btn.style.visibility="hidden";
+          btn.onclick = ()=> flipMyCard(card.id);
+          board.appendChild(btn);
         });
+        $("hint").textContent = ended ? "Hết thời gian phiên." : (st.lock? "Đang kiểm tra cặp…":"Chọn 2 thẻ để lật");
+      });
+    }
+
+    // ---- Utility: chia chỉ số câu theo round 6–7 ----
+    function sliceIndicesForRound(sessionMeta, roundIndex, orderLen){
+      const base  = sessionMeta?.baseSize || 6;
+      const extra = sessionMeta?.extra    || 0;
+      const prior7 = Math.min(roundIndex-1, extra);
+      const prior6 = Math.max(0, (roundIndex-1)-extra);
+      const start  = prior7*(base+1) + prior6*base;
+      const len    = (roundIndex-1) < extra ? (base+1) : base;
+      const end    = Math.min(start + len, orderLen);
+      return { start, end, len };
+    }
+
+    // ---- Tạo bàn cho vòng (riêng người chơi) ----
+    async function ensureRoundState(round){
+      if(!cachedPairs || !cachedOrder || !cachedSessMeta){
+        // đợi host bắt đầu phiên
+        return;
       }
+      const { start, end, len } = sliceIndicesForRound(cachedSessMeta, round, cachedOrder.length);
+      const indices = cachedOrder.slice(start, end);
+      const subset  = indices.map(i => cachedPairs[i]); // [{q,a}...]
 
-      async function flipCard(cardId) {
-        const base = ref(db, `rooms/${joinedRoomId}/memory/state`);
-        const st = (await get(base)).val();
-        if (!st || st.lock) return;
+      // dựng deck riêng
+      let cid=0, deck=[];
+      subset.forEach((p, idx)=>{
+        deck.push({ id: cid++, pair: idx, text: p.q, removed:false });
+        deck.push({ id: cid++, pair: idx, text: p.a, removed:false });
+      });
+      // xáo trộn deck (per-player)
+      for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
 
-        const metaRef = ref(db, `rooms/${joinedRoomId}/memory/meta`);
-        const meta = (await get(metaRef)).val() || {};
-        if (meta.ended === true) return; // hết giờ/kết thúc phiên
+      // ghi state & meta riêng
+      await set(ref(db, `rooms/${joinedRoomId}/sessions/${myId}/state`), {
+        cols: DEFAULT_COLS,
+        pts: 5,
+        deck, flipped: [], lock:false
+      });
+      await update(ref(db, `rooms/${joinedRoomId}/sessions/${myId}/meta`), {
+        round, left: subset.length
+      });
+    }
 
-        const card = st.deck.find((c) => c.id === cardId);
-        if (!card || card.removed) return;
-        if ((st.flipped || []).includes(cardId)) return;
+    // ---- Lật thẻ (riêng bàn của tôi) ----
+    async function flipMyCard(cardId){
+      // khóa theo room timer
+      if(cachedSessMeta && (cachedSessMeta.endAt||0) <= Date.now()) return;
 
-        const flipped = [...(st.flipped || []), cardId];
-        await update(base, { flipped });
+      const baseRef = ref(db, `rooms/${joinedRoomId}/sessions/${myId}/state`);
+      const st = (await get(baseRef)).val(); if(!st || st.lock) return;
 
-        if (flipped.length === 2) {
-          await update(base, { lock: true });
-          const [c1, c2] = flipped.map((id) =>
-            st.deck.find((c) => c.id === id)
-          );
-          const match = c1.pair === c2.pair && c1.id !== c2.id;
+      const card = st.deck.find(c=>c.id===cardId); if(!card || card.removed) return;
+      if((st.flipped||[]).includes(cardId)) return;
 
-          if (match) {
-            st.deck = st.deck.map((c) =>
-              c.id === c1.id || c.id === c2.id ? { ...c, removed: true } : c
-            );
-            await update(base, { deck: st.deck, flipped: [], lock: false });
+      const flipped = [...(st.flipped||[]), cardId];
+      await update(baseRef, { flipped });
 
-            // giảm left (host sẽ tự advance nếu còn thời gian)
-            const m = (await get(metaRef)).val() || { left: 0 };
-            const newLeft = Math.max(0, (m.left || 0) - 1);
-            await update(metaRef, { left: newLeft });
-          } else {
-            setTimeout(async () => {
-              await update(base, { flipped: [], lock: false });
-            }, 900);
+      if(flipped.length===2){
+        await update(baseRef, { lock:true });
+        const [c1,c2] = flipped.map(id=> st.deck.find(c=>c.id===id));
+        const match = c1.pair===c2.pair && c1.id!==c2.id;
+
+        if(match){
+          st.deck = st.deck.map(c=> (c.id===c1.id||c.id===c2.id) ? {...c, removed:true} : c);
+          await update(baseRef, { deck:st.deck, flipped:[], lock:false });
+
+          // cập nhật meta.left của riêng tôi
+          const myMetaRef = ref(db, `rooms/${joinedRoomId}/sessions/${myId}/meta`);
+          const m = (await get(myMetaRef)).val() || {round:1,left:0};
+          const newLeft = Math.max(0, (m.left||0)-1);
+          await update(myMetaRef, { left:newLeft });
+
+          // cộng điểm cá nhân (giữ như cũ)
+          const sRef = ref(db, `rooms/${joinedRoomId}/scores/${myId}`);
+          const p = (await get(sRef)).val() || {name:$("me").textContent, score:0};
+          await update(sRef, { name:p.name||$("me").textContent, score:(p.score||0)+ (st.pts||5) });
+
+          // auto next vòng nếu còn thời gian & chưa đạt roundsMax
+          if(newLeft===0 && cachedSessMeta){
+            const remain = Math.max(0, cachedSessMeta.endAt - Date.now());
+            const maxR = cachedSessMeta.roundsMax || 1;
+            if(remain>0 && m.round < maxR){
+              const next = m.round + 1;
+              await update(myMetaRef, { round: next });
+              await ensureRoundState(next);
+            }
           }
+        } else {
+          setTimeout(async ()=>{ await update(baseRef, { flipped:[], lock:false }); }, 900);
         }
       }
-    </script>
-  </body>
+    }
+  </script>
+</body>
 </html>
